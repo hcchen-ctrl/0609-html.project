@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <title>Document</title>
+    <style>
+        h1 {
+            font-weight: bold;
+            color: #100f0f;
+            padding: 1px;
+            font-size: 32px;
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+        }
+
+        /* Header 動畫 */
+        header {
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: #fefdfd;
+            font-weight: bold;
+            padding: 2rem;
+            font-size: 45px;
+            background: linear-gradient(135deg, #FAEDCD 0%, #D4A373 100%);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Navigation 樣式與動畫 */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: navSlideDown 1s ease-out 0.5s both;
+        }
+
+        nav a {
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FAEDCD, #E9EDC9);
+            z-index: -1;
+        }
+
+        nav a:hover {
+            color: rgb(212, 163, 115);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        nav a:hover::before {
+            left: 0;
+        }
+
+        .gallery {
+            column-count: 4;
+            column-gap: 1em;
+            padding: 1em;
+        }
+
+        .image-box {
+            position: relative;
+            margin-bottom: 1em;
+            break-inside: avoid;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .image-box img {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .text-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0.6em;
+            background: rgba(0, 0, 0, 0.5);
+            /* 半透明黑底 */
+            color: white;
+            text-align: center;
+            font-size: 1em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-box:hover .text-overlay {
+            opacity: 1;
+        }
+
+        @media (max-width: 1200px) {
+            .gallery {
+                column-count: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery {
+                column-count: 1;
+            }
+        }
+
+
+        footer {
+            text-align: center;
+            padding: 3%;
+            background: linear-gradient(135deg, #D4A373 0%, #FAEDCD 100%);
+            font-size: 14px;
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+
+        a:hover {
+            text-decoration: none
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        #category-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        #category-buttons button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #FAEDCD);
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        #category-buttons button:hover {
+            transform: translateY(2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #category-buttons button.active {
+            background: linear-gradient(135deg, #FAEDCD);
+        }
+
+        .article-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .article-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        .article-content {
+            flex: 1;
+            position: relative;
+        }
+
+        .article-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .article-card h3 a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 1em;
+            color: #666;
+        }
+
+        .category-tag {
+            background: linear-gradient(135deg, #FAEDCD, #E9EDC9);
+            color: rgb(9, 9, 9);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .article-summary {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .article-card {
+                flex-direction: column;
+            }
+
+            .article-image {
+                width: 100%;
+                height: 200px;
+            }
+
+            #searchInput {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        .comment-box input,
+        .comment-box textarea {
+            width: 100%;
+            margin-bottom: 1rem;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+        }
+
+        .comment-box button {
+            background-color: #faedcd;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .comment-box button:hover {
+            background-color: #d4a373;
+            color: white;
+        }
+
+        #list {
+            margin-top: 1rem;
+            font-size: 15px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <header style="font-size: 40px;font-family:Microsoft JhengHei">CHC'S旅遊日記
+    </header>
+
+    <nav>
+        <a href=".//首頁V2.html">首頁</a>
+        <a href=".//國內旅遊.html">國內旅遊</a>
+        <a href=".//國外旅遊.html">外國旅行</a>
+        <a href=".//旅行軌跡.html">旅行軌跡</a>
+    </nav>
+
+    <div class="container">
+        <br>
+        <h1>最新文章</h1>
+
+
+        <div id="result">
+            <div class="loading">載入中...</div>
+        </div>
+        <ul class="pagination pagination-sm justify-content-center" id="pagination">
+        </ul>
+    </div>
+
+    <script>
+        var allArticles = [];
+        var fullData = [];
+        var currentPage = 1;
+        var pageSize = 3;
+        var title = document.getElementById("name");
+        var content = document.getElementById("content");
+        var btn = document.getElementById("btn");
+        var list = document.getElementById("list");
+
+        // 同時讀取兩個 JSON
+        function getData() {
+            Promise.all([
+                fetch('home.json').then(function (res) { return res.json(); }),
+                fetch('homepage.json').then(function (res) { return res.json(); })
+            ])
+                .then(function (results) {
+                    allArticles = results[0];  // 只顯示簡略版（有 id、title、summary）
+                    fullData = results[1];     // 詳細資料放這裡
+                    renderPage(currentPage);
+                    renderPagination();
+                })
+                .catch(function (err) {
+                    console.error("❌ 讀取 JSON 錯誤：", err);
+                    document.getElementById("result").innerHTML = "資料載入失敗";
+                });
+        }
+
+        function renderPage(page) {
+            var startIndex = (page - 1) * pageSize;
+            var endIndex = startIndex + pageSize;
+            var pageItems = allArticles.slice(startIndex, endIndex);
+
+            var result = document.getElementById("result");
+            result.innerHTML = "";
+
+            for (var i = 0; i < pageItems.length; i++) {
+                var article = pageItems[i];
+                result.innerHTML += `
+        <div class="article-card">
+          <div class="article-image-container">
+            ${article.image ? `<img src="${article.image}" alt="${article.title}" class="article-image">` : ''}
+          </div>
+          <div class="article-content">
+            <h3>${article.title}</h3>
+            <div class="article-meta">
+              <span class="category-tag">${article.category}</span>
+              ${article.date ? `` : ''}
+            </div>
+            <div class="article-summary">${article.summary}</div>
+            <button class="btn btn-light mt-2" onclick="onpePost(${article.id})">看更多</button>
+          </div>
+        </div>
+      `;
+            }
+        }
+
+        function onpePost(id) {
+            var app = document.getElementById("result");
+            var spot = fullData.find(function (item) {
+                return item.id === id;
+            });
+
+            if (!spot) {
+                app.innerHTML = '<p>❌ 找不到文章資料</p>';
+                return;
+            }
+
+            var html = `
+      <button onclick="renderPage(${currentPage})" class="btn btn-secondary mb-3">← 回列表</button>
+      <h1>${spot.title}</h1>
+      <img src="${spot.image}" alt="${spot.title}" style="max-width: 100%; margin-bottom: 1rem;">
+      <p><strong>分類：</strong> ${spot.category}</p>
+      <p><strong>介紹：</strong> ${spot.summary}</p>
+      <a href="${spot.addressurl}"><strong>地圖連結：</strong> ${spot.addressurl}</a>
+       <div class="container">
+            <div class="comment-box">
+               <br> <h4 class="mb-3">📝 訪客留言</h4>
+
+                <label for="name">暱稱</label>
+                <input type="text" id="name" placeholder="輸入你的暱稱"><br>
+
+                <label for="content">留言內容</label>
+                <textarea id="content" rows="4" placeholder="寫下你的感想..."></textarea>
+
+               <br> <button id="btn" onclick="btnopen()">發布留言</button>
+
+                <div id="list"></div>
+            </div>
+        </div>
+    `;
+
+            app.innerHTML = html;
+        }
+
+
+        function btnopen() {
+            var name = document.getElementById("name");
+            var content = document.getElementById("content");
+            var list = document.getElementById("list");
+
+            if (!name || !content || !list) return;
+
+            if (name.value.trim() === "" || content.value.trim() === "") {
+                alert("請填寫暱稱與留言內容！");
+                return;
+            }
+
+            list.innerHTML += `
+    <div class="article">
+      <h5>${name.value}</h5>
+      <p>${content.value}</p>
+      <hr />
+    </div>
+  `;
+
+            name.value = "";
+            content.value = "";
+        }
+
+
+        function renderPagination() {
+            var totalPages = Math.ceil(allArticles.length / pageSize);
+            var pagination = document.getElementById("pagination");
+            pagination.innerHTML = "";
+
+            for (var i = 1; i <= totalPages; i++) {
+                var li = document.createElement("li");
+                li.className = "page-item" + (i === currentPage ? " active" : "");
+
+                var a = document.createElement("a");
+                a.className = "page-link";
+                a.href = "#";
+                a.innerText = i;
+
+                a.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    currentPage = parseInt(this.innerText, 10);
+                    renderPage(currentPage);
+                    renderPagination();
+                });
+
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+        }
+
+        // 初始化
+        window.addEventListener("DOMContentLoaded", getData);
+
+
+    </script>
+
+    <div class="container">
+        <h1>旅遊景點照片牆</h1>
+        <div id="alwaysopen" class="gallery">
+            <div class="image-box">
+                <a href="./images/B8CAE3A1-DCB4-491D-9372-C31C5F9E5D72.jpg">
+                    <img src="./images/B8CAE3A1-DCB4-491D-9372-C31C5F9E5D72.jpg" alt="行程1">
+                    <div class="text-overlay">📍 魚刺人雞蛋糕</div>
+                </a>
+            </div>
+
+            <div class="image-box">
+                <a href=".//images/S__29335577.jpg">
+                    <img src=".//images/S__29335577.jpg" alt="行程2">
+                    <div class="text-overlay">📍 九份夜景</div>
+                </a>
+            </div>
+            <div class="image-box">
+                <a href="./images/S__29540359.jpg">
+                    <img src="./images/S__29540359.jpg" alt="行程2">
+                    <div class="text-overlay">📍 由布院之森列車</div>
+                </a>
+            </div>
+
+            <div class="image-box">
+                <a href=".//images/S__29335572_0.jpg">
+                    <img src=".//images/S__29335572_0.jpg" alt="行程3">
+                    <div class="text-overlay">📍 陰陽海</div>
+                </a>
+            </div>
+
+            <div class="image-box">
+                <a href=".//images/S__29196292_0.jpg">
+                    <img src=".//images/S__29196292_0.jpg" alt="行程4">
+                    <div class="text-overlay">📍 天元宮</div>
+                </a>
+            </div>
+
+            <div class="image-box">
+                <a href=".//images/S__29499408_0.jpg">
+                    <img src=".//images/S__29499408_0.jpg" alt="行程5">
+                    <div class="text-overlay">📍日本大分湯布院</div>
+                </a>
+            </div>
+
+            <div class="image-box">
+                <a href="./images/S__29499407_0.jpg">
+                    <img src="./images/S__29499407_0.jpg" alt="行程6">
+                    <div class="text-overlay">📍 日本京都二年坂夜景
+                    </div>
+                </a>
+            </div>
+            <div class="image-box">
+                <a href=".//images/IMG_9470.jpg">
+                    <img src=".//images/IMG_9470.jpg" alt="行程6">
+                    <div class="text-overlay">📍 清水斷崖</div>
+                </a>
+            </div>
+            <div class="image-box">
+                <a href=".//images/S__29343746.jpg">
+                    <img src=".//images/S__29343746.jpg" alt="行程6">
+                    <div class="text-overlay">📍 老梅石槽</div>
+                </a>
+            </div>
+
+        </div>
+
+        <div id="open" class="gallery" style="display: none;">
+            <div class="image-box">
+                <a href="./images/S__29540357_0.jpg">
+                    <img src="./images/S__29540357_0.jpg" alt="行程1">
+                    <div class="text-overlay">📍 士林天文館</div>
+                </a>
+            </div>
+
+            <div class="image-box">
+                <a href="./images/S__29499404.jpg">
+                    <img src="./images/S__29499404.jpg" alt="行程2">
+                    <div class="text-overlay">📍 日本北九州小倉城</div>
+                </a>
+            </div>
+            <div class="image-box">
+                <a href="./images/S__29499409_0.jpg">
+                    <img src="./images/S__29499409_0.jpg" alt="行程2">
+                    <div class="text-overlay">📍 由布院金鱗湖</div>
+                </a>
+            </div>
+
+            <div class="image-box">
+                <a href="./images/S__29597741_0.jpg">
+                    <img src="./images/S__29597741_0.jpg" alt="行程3">
+                    <div class="text-overlay">📍 韓國Moment Coffee</div>
+                </a>
+            </div>
+            <div class="image-box">
+                <a href="./images/S__29335575_0.jpg">
+                    <img src="./images/S__29335575_0.jpg" alt="行程3">
+                    <div class="text-overlay">📍新北瑞芳 三貂嶺生態友善隧道</div>
+                </a>
+            </div>
+            <div class="d-grid gap-3">
+                <button class="button btn btn-light" onclick="changeClose()">收回</button>
+            </div>
+
+        </div>
+        <div class="d-grid gap-3">
+            <button class="button btn btn-light" onclick="changeOpen()">點我看更多</button>
+        </div>
+    </div>
+    <script>
+        function changeOpen() {
+            let alwaysopenDiv = document.querySelector("#alwaysopen");
+            let openDiv = document.querySelector("#open");
+            alwaysopenDiv.style.display = "block";
+            openDiv.style.display = "block";
+        }
+
+        function changeClose() {
+            let alwaysopenDiv = document.querySelector("#alwaysopen");
+            let openDiv = document.querySelector("#open");
+            alwaysopenDiv.style.display = "block";
+            openDiv.style.display = "none";
+        }
+    </script>
+
+
+
+    <br>
+    <footer>
+        <div class="footer-section">
+            <div class="row">
+                <div class="col-6">
+                    <h4> 關於我</h4>
+                    <p>📌這是一個業餘記錄生活吃吃喝喝的小日記<br>
+                        📌台北美食｜淡水美食｜不定時國外國內美食景點</p>
+                </div>
+                <div class="col-6">
+                    <h4> 聯絡資訊</h4>
+                    <a href="https://www.instagram.com/h.c_traveldiary?igsh=MWV5bmhwaXBnaGY4Yw%3D%3D&utm_source=qr"
+                        target="_blank" class="footer">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+                            alt="Follow us on Instagram" width="32">
+                        追蹤Instagram！
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="footer-bottom">
+            <p>&copy; 2025 版權所有 | 設計與開發 CHC</p>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>

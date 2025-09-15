@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <title>Document</title>
+    <style>
+        h1 {
+            font-weight: bold;
+            color: #100f0f;
+            padding: 20px 5px 5px 5px;
+            font-size: 32px;
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+        }
+
+        /* Header 動畫 */
+        header {
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: #fefdfd;
+            font-weight: bold;
+            padding: 2rem;
+            font-size: 45px;
+            background: linear-gradient(135deg, #FAEDCD 0%, #D4A373 100%);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: headerFadeIn 1.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        /* Navigation 樣式與動畫 */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: navSlideDown 1s ease-out 0.5s both;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FAEDCD, #E9EDC9);
+            z-index: -1;
+        }
+
+        nav a:hover {
+            color: rgb(212, 163, 115);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        nav a:hover::before {
+            left: 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        section {
+            margin: 1.5rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #D4A373 0%, #FAEDCD 100%);
+            font-size: 0.9rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+
+        a:hover {
+            text-decoration: none
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        /* 確保地圖 hotspot 隨圖片縮放 */
+        .map-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .map-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .spot {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #D4A373;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+            transform: translate(-50%, -50%);
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+        }
+
+        .spot_food {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #b573d4;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+            transform: translate(-50%, -50%);
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+        }
+
+        .spot:hover,
+        .spot_food:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+        }
+
+        .spot::after,
+        .spot_food::after {
+            content: attr(data-title);
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #FAEDCD;
+            color: rgb(10, 10, 10);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+        }
+
+        .spot:hover::after,
+        .spot_food:hover::after {
+            opacity: 1;
+        }
+
+        /* iframe 響應式 */
+        .responsive-iframe {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            /* 16:9 比例 */
+            overflow: hidden;
+        }
+
+        .responsive-iframe iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 小裝置下 row 換行 */
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+            }
+
+            .col-6 {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        p {
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            font-size: 18px;
+            padding: 5px 5px 5px 5px;
+        }
+
+        a.download {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            padding: 10px 50px;
+            border-radius: 25px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            background-color: #FAEDCD;
+            display: inline-block;
+            text-align: center;
+            margin: 10px auto;
+        }
+
+        /* 滑鼠 hover 效果 */
+        a.download:hover {
+            color: rgb(212, 163, 115);
+            transform: translateY(-3px);
+        }
+
+        /* 響應式調整：螢幕寬度小於 768px（平板與手機） */
+        @media (max-width: 768px) {
+            a.download {
+                display: block;
+                width: 100%;
+                padding: 12px 20px;
+                font-size: 14px;
+                border-radius: 15px;
+            }
+        }
+
+        a.tell {
+            font-size: 16px;
+            width: 170px;
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            padding: 7px 7px 10px 7px;
+            border-radius: 20px;
+            text-align: justify;
+            /* ✅ 加這行讓文字左右對齊 */
+        }
+    </style>
+</head>
+
+<body>
+    <header style="font-size: 40px;font-family:Microsoft JhengHei">CHC'S旅遊日記
+    </header>
+
+    <nav>
+        <a href=".//首頁V2.html">首頁</a>
+        <a href=".//國內旅遊.html">國內旅遊</a>
+        <a href=".//國外旅遊.html">外國旅行</a>
+        <a href=".//旅行軌跡.html">旅行軌跡</a>
+    </nav>
+
+    <div class="container">
+        <h1>我的旅行軌跡(TW)</h1>
+        <h1 style="font-size: 18px;">說明</h1>
+        <a class="tell"> 在這張互動式美食景點地圖中，精選多個台灣各地的人氣美食與特色景點，透過視覺化的方式呈現在地圖上。
+            只需將滑鼠移到地圖標記，即可快速預覽該地名稱，點擊後可直接前往地圖導航連結，讓旅遊與美食探索變得更直覺、更有趣。
+            此地圖同時支援手機與電腦操作，自動響應畫面尺寸，方便使用者隨時查看與規劃行程。
+            這不僅是一張地圖，更是你在台灣吃喝玩樂的數位旅伴，一起展開台灣探索之旅吧！</a><br><br>
+        <a class="tell" style="background-color:#D4A373">橘色表示我去過的景點</a>
+        <a class="tell" style="background-color:#b573d4">紫色表示我吃過的美食</a>
+        <br>
+        <div class="map-container">
+            <img src="./images/台灣行政區_空白.jpg" alt="北區地圖" usemap="#map_1" style="width: 100%; height:auto; ">
+            <a href="https://maps.app.goo.gl/wFhDsphB6tDu145GA" class="spot" data-title="三貂嶺生態友善隧道"
+                style="top: 9%; left: 90%;"></a>
+            <a href="https://maps.app.goo.gl/b729Tec8m3r3mQyu8" class="spot" data-title="臺北市立天文科學教育館"
+                style="top: 9%; left: 79%;"></a>
+            <a href="https://maps.app.goo.gl/WSjQBZzEy9SZw9z1A" class="spot_food" data-title="魚刺人雞蛋糕"
+                style="top: 35%; left: 82%;"></a>
+            <a href="https://maps.app.goo.gl/wiPyBji5DcCGYXST8" class="spot" data-title="亞洲大學美術館"
+                style="top: 36%; left: 51%;"></a>
+            <a href="https://maps.app.goo.gl/beUSoqLAd5vZLVgt6" class="spot" data-title="台南二寮日出"
+                style="top: 64%; left: 40%;"></a>
+            <a href="https://maps.app.goo.gl/RDX22F964PiPPcUa9" class="spot" data-title="九份夜景"
+                style="top: 9%; left: 89%;"></a>
+            <a href="https://maps.app.goo.gl/uT4YfvopczHCBY3p8" class="spot" data-title="蘭陽動植物王國"
+                style="top: 18%; left: 88%;"></a>
+            <a href="https://maps.app.goo.gl/SxE7Q1RGWBLQoizW9" class="spot" data-title="溪頭自然教育園區"
+                style="top: 46%; left: 54%;"></a>
+            <a href="https://maps.app.goo.gl/d5vanLmWCX2EsJg89" class="spot" data-title="台南赤崁樓"
+                style="top: 64%; left: 31%;"></a>
+            <a href="https://maps.app.goo.gl/jz4qo8FWchmEi5ex5" class="spot" data-title="高雄駁二特區"
+                style="top: 74%; left: 35%;"></a>
+            <a href="https://maps.app.goo.gl/4fJgHxv9JsWkArzJ9" class="spot_food" data-title="農鄉臭豆腐"
+                style="top: 33%; left: 51%;"></a>
+            <a href="https://maps.app.goo.gl/XnifmMgb1Cxd4P3cA" class="spot_food" data-title="莉莉水果店"
+                style="top: 64%; left: 32%;"></a>
+            <a href="https://maps.app.goo.gl/7afDMc4ZCSx97RUV7" class="spot" data-title="大溪老街"
+                style="top: 15%; left: 72%;"></a>
+            <a href="https://maps.app.goo.gl/jAuS9Y9Yh76yufHk9" class="spot_food" data-title="DOUBLE O’S BAGELS CAFE’"
+                style="top: 6%; left: 76%;"></a>
+        </div>
+
+
+    </div>
+
+
+    <div class="container">
+        <h1>我的旅遊手札</h1>
+        <div class="row">
+            <div class="col-6">
+                <p>202502沖繩</p>
+                <div class="responsive-iframe">
+                    <iframe src="./PDF/20250219沖繩.pdf"></iframe>
+                </div>
+            </div>
+            <div class="col-6">
+                <p>202405-熊本</p>
+                <div class="responsive-iframe">
+                    <iframe src="./PDF/熊本5天4夜手冊 (1).pdf"></iframe>
+                </div>
+            </div>
+        </div>
+
+
+        <div style=" padding: 10px 10px 50px 10px;">
+            <h1>下載專區</h1>
+            <hr />
+            <a class="download" href=".//PDF/熊本5天4夜手冊 (1).pdf" download>熊本手冊📖</a>
+            <a class="download" href="./PDF/20250219沖繩.pdf" download>沖繩手冊📖</a>
+            <a class="download" href=".//PDF/熊本5天4夜手冊 (1).pdf" download>福岡手冊📖</a>
+
+        </div>
+    </div>
+
+
+
+    <footer>
+        <div class="footer-section">
+            <div class="row">
+                <div class="col-6">
+                    <h4> 關於我</h4>
+                    <p>📌這是一個業餘記錄生活吃吃喝喝的小日記<br>
+                        📌台北美食｜淡水美食｜不定時國外國內美食景點</p>
+                </div>
+                <div class="col-6">
+                    <h4> 聯絡資訊</h4>
+                    <a href="https://www.instagram.com/h.c_traveldiary?igsh=MWV5bmhwaXBnaGY4Yw%3D%3D&utm_source=qr"
+                        target="_blank" class="footer">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+                            alt="Follow us on Instagram" width="32">
+                        追蹤Instagram！
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="footer-bottom">
+            <p>&copy; 2025 版權所有 | 設計與開發 CHC</p>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>
